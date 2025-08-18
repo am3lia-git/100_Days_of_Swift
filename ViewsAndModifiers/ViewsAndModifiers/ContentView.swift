@@ -7,16 +7,25 @@
 
 import SwiftUI
 
+struct TitleStyle : ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .font(.largeTitle)
+            .foregroundColor(.blue)
+            .fontWeight(.bold)
+    }
+}
+
+extension View {
+    public func titleStyle() -> some View {
+        self.modifier(TitleStyle())
+    }
+}
+
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(.red)
+        Text("Hello, World!")
+            .titleStyle()
     }
 }
 
