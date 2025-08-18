@@ -53,9 +53,13 @@ struct ContentView: View {
                     .pickerStyle(.segmented)
                 }
                 
-                Section {
+                Section("Amount per person") {
                         Text(totalPerPerson, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
                     }
+                Section("Total amount"){
+                    Text(totalPerPerson * Double(numberOfPeople), format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+                        .foregroundColor(tipPercentage == 0 ? .red : .primary)
+                }
             }
             .navigationTitle(Text("WeSplit"))
             .toolbar {
