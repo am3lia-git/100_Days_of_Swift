@@ -13,10 +13,6 @@ struct ContentView: View {
     @State private var sleepAmount = 8.0
     @State private var coffeeAmount = 1
     
-    @State private var alertTitle = ""
-    @State private var alertMessage = ""
-    @State private var showingAlert = false
-    
     static var defaultWakeTime: Date {
         var components = DateComponents()
         components.hour = 7
@@ -46,23 +42,24 @@ struct ContentView: View {
                 VStack(alignment: .leading, spacing: 0){
                     Text("Daily coffee intake").font(.headline)
                     
-                    Stepper("^[\(coffeeAmount) cup](inflect: true)", value: $coffeeAmount, in: 1...20)
+                    Picker("Coffee Amount", selection: $coffeeAmount){
+                        ForEach(1...20, id: \.self){ amount in
+                            Text("^[\(amount) cup](inflect: true)" )
+                        }
+                    }
+                }
+                Section("Your ideal bedtime is:"){
+                    Text(calculateBedtime())
+                        .font(.title)
                 }
                 
             }
             .navigationTitle("BetterRest")
-            .toolbar{
-                Button("Calculate", action: calculateBedtime)
-            }
-            .alert(alertTitle, isPresented: $showingAlert){
-                Button("OK"){}
-            } message:{
-                Text(alertMessage)
-            }
+            
         }
     }
     
-    func calculateBedtime() {
+    func calculateBedtime() -> String{
         do{
             let config = MLModelConfiguration()
             let model = try SleepCalculator(configuration: config)
@@ -75,17 +72,14 @@ struct ContentView: View {
             
             let sleepTime = wakeUp - prediction.actualSleep
             
-            alertTitle = "Your ideal bedtime is..."
-            alertMessage = sleepTime.formatted(date: .omitted, time: .shortened)
+            return sleepTime.formatted(date: .omitted, time: .shortened)
             
         } catch{
             // Something went wrong
             
-            alertTitle = "Error"
-            alertMessage = "Sorry, there was a problem calculating your bedtime"
+            return "Sorry, there was a problem calculating your bedtime"
             
         }
-        showingAlert = true
         
     }
 }
